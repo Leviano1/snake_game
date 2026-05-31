@@ -20,13 +20,24 @@ public class GamePanel extends JPanel implements ActionListener{
     Timer timer;
     Random random;
     Color snakeColor;
+    JButton restartButton;
 
     public GamePanel(){
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.black);
         this.setFocusable(true);
+        this.setLayout(null);
         this.addKeyListener(new MyKeyAdapter());
+        
+        restartButton = new JButton("Restart.");
+        restartButton.setBounds(225, 350, 150, 40);
+        restartButton.setVisible(false);
+        add(restartButton);
+        restartButton.addActionListener(e -> {
+            restartGame();
+        });
+
         startGame();
     }
 
@@ -126,6 +137,11 @@ public class GamePanel extends JPanel implements ActionListener{
         if(!running){
             timer.stop();
         }
+
+        if(!running){
+            timer.stop();
+            restartButton.setVisible(true);
+        }
     }
 
     public void gameOver(Graphics g){ 
@@ -142,14 +158,28 @@ public class GamePanel extends JPanel implements ActionListener{
         g.drawString("Score: " + applesEaten, (SCREEN_WIDTH - metrics.stringWidth("Score: " + applesEaten))/2, g.getFont().getSize());
     }
 
+    public void restartGame(){
+        bodyParts = 6;
+        applesEaten = 0;
+        direction = 'R';
+        for(int i = 0; i < x.length; i++){
+            x[i] = 0;
+            y[i] = 0;
+        }
+
+        restartButton.setVisible(false);
+        startGame();
+        repaint();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if(running){
             move();
             checkApple();
             checkCollisions();
-        }
         repaint();
+        }
     }
 
     public class MyKeyAdapter extends KeyAdapter{
