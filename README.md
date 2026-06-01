@@ -2,13 +2,14 @@
 
 ## Easy additions
 
-1. Pause key (P)
-2. Restart key after Game Over (Done)
+1. Pause key (P). ✅
+> added the pauseDisplay() method that is called if the "P" key is pressed.
+2. Restart key after Game Over. ✅
 > made a restart button that appear after the game is finished.
 3. High score that survives multiple games
 4. Difficulty selection (Easy/Medium/Hard)
 5. Speed increases every few apples
-6. Different snake colors each game (Done).
+6. Different snake colors each game. ✅
 > used a random colour generator.
 
 

@@ -21,6 +21,7 @@ public class GamePanel extends JPanel implements ActionListener{
     Random random;
     Color snakeColor;
     JButton restartButton;
+    boolean paused = false;
 
     public GamePanel(){
         random = new Random();
@@ -73,12 +74,13 @@ public class GamePanel extends JPanel implements ActionListener{
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE); //fill the rectangle;
                 }
             }
-            scoreDisplay(g);
+            if(paused){
+                pauseDisplay(g);
+            }
         }else{
-            scoreDisplay(g);
             gameOver(g);
         }
-        
+        scoreDisplay(g);
     }
 
     public void newApple(){
@@ -146,16 +148,23 @@ public class GamePanel extends JPanel implements ActionListener{
 
     public void gameOver(Graphics g){ 
         g.setColor(Color.red);
-        g.setFont(new Font("Ink Free", Font.BOLD, 40));
-        FontMetrics metrics2 = getFontMetrics(g.getFont()); //this is used to center the text on the screen;
-        g.drawString("Game Over.", (SCREEN_WIDTH - metrics2.stringWidth("Game Over."))/2, SCREEN_HEIGHT/2);
+        g.setFont(new Font("Times New Roman", Font.BOLD, 40));
+        FontMetrics metrics = getFontMetrics(g.getFont()); //this is used to center the text on the screen;
+        g.drawString("Game Over.", (SCREEN_WIDTH - metrics.stringWidth("Game Over."))/2, SCREEN_HEIGHT/2);
     }
 
     public void scoreDisplay(Graphics g){
         g.setColor(Color.red);
-        g.setFont(new Font("Ink Free", Font.BOLD, 20));
+        g.setFont(new Font("Times New Roman", Font.BOLD, 20));
         FontMetrics metrics = getFontMetrics(g.getFont()); //this is used to center the text on the screen;
         g.drawString("Score: " + applesEaten, (SCREEN_WIDTH - metrics.stringWidth("Score: " + applesEaten))/2, g.getFont().getSize());
+    }
+
+    public void pauseDisplay(Graphics g){
+        g.setColor(Color.blue);
+        g.setFont(new Font("Times New Roman", Font.BOLD, 40));
+        FontMetrics metrics = getFontMetrics(g.getFont());
+        g.drawString("Game is paused.", (SCREEN_WIDTH - metrics.stringWidth("Game is paused."))/2, SCREEN_HEIGHT/2);
     }
 
     public void restartGame(){
@@ -174,12 +183,12 @@ public class GamePanel extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(running){
+        if(running && !paused){
             move();
             checkApple();
-            checkCollisions();
-        repaint();
+            checkCollisions(); 
         }
+        repaint();
     }
 
     public class MyKeyAdapter extends KeyAdapter{
@@ -206,6 +215,9 @@ public class GamePanel extends JPanel implements ActionListener{
                         direction = 'D';
                     }
                     break;
+                case KeyEvent.VK_P:
+                        paused = !paused;
+                        break;
             }
         }
     }
