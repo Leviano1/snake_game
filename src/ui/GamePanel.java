@@ -1,3 +1,6 @@
+package ui;
+import difficulty.DifficultyBehaviour;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -8,7 +11,6 @@ public class GamePanel extends JPanel implements ActionListener{
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 50; //the size of each unit in the game, the snake and the apple will be in multiples of this unit size;
     static final int GAME_UNITS = (SCREEN_WIDTH*SCREEN_HEIGHT)/UNIT_SIZE;
-    static final int DELAY = 200; //the higher the delay, the slower the game;
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
     int bodyParts = 6;
@@ -22,14 +24,16 @@ public class GamePanel extends JPanel implements ActionListener{
     Color snakeColor;
     JButton restartButton;
     boolean paused = false;
+    
 
-    public GamePanel(){
+    public GamePanel(DifficultyBehaviour difficulty){
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.black);
         this.setFocusable(true);
         this.setLayout(null);
         this.addKeyListener(new MyKeyAdapter());
+        timer = new Timer(difficulty.getDelay(), this);
         
         restartButton = new JButton("Restart.");
         restartButton.setBounds(225, 350, 150, 40);
@@ -46,7 +50,6 @@ public class GamePanel extends JPanel implements ActionListener{
         snakeColor = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
         newApple();
         running = true;
-        timer = new Timer(DELAY, this);
         timer.start();
     }
 
