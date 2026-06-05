@@ -6,11 +6,13 @@
 > Added the pauseDisplay() method that is called if the "P" key is pressed.
 2. Restart key after Game Over. ✅
 > Made a restart button that appear after the game is finished.
-3. High score that survives multiple games
-4. Difficulty selection (Easy/Medium/Hard) ✅
+3. High score that survives multiple games. ✅
+> Added the highScoreDisplay() method, altered the checkApple() method with if cindition that checks if current score is more than high score and if so the new high score is set.
+4. Difficulty selection (Easy/Medium/Hard). ✅
 > Created a difficulty menu, that pops up before the game, in GamePanel class.
 > Implemented a Strategy DP, by creating the DifficultyBehaviour interface, and implementing it across distinct classes including EasyDifficulty, MediumDifficulty, HardDifficulty.
-5. Speed increases every few apples
+5. Speed increases every few apples. ✅
+> Added an if condition inside the checkApple() class, that increasses the speed by 10 (i.e. reduces the delay by 10)every 2 apples.
 6. Different snake colors each game. ✅
 > Implemented a random colour generator.
 

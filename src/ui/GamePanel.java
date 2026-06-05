@@ -24,6 +24,8 @@ public class GamePanel extends JPanel implements ActionListener{
     Color snakeColor;
     JButton restartButton;
     boolean paused = false;
+    int highScore = 0;
+    int startingDelay;
     
 
     public GamePanel(DifficultyBehaviour difficulty){
@@ -33,7 +35,8 @@ public class GamePanel extends JPanel implements ActionListener{
         this.setFocusable(true);
         this.setLayout(null);
         this.addKeyListener(new MyKeyAdapter());
-        timer = new Timer(difficulty.getDelay(), this);
+        this.startingDelay = difficulty.getDelay();
+        timer = new Timer(startingDelay, this);
         
         restartButton = new JButton("Restart.");
         restartButton.setBounds(225, 350, 150, 40);
@@ -84,6 +87,7 @@ public class GamePanel extends JPanel implements ActionListener{
             gameOver(g);
         }
         scoreDisplay(g);
+        highScoreDisplay(g);
     }
 
     public void newApple(){
@@ -116,6 +120,14 @@ public class GamePanel extends JPanel implements ActionListener{
         if((x[0] == appleX) && (y[0] == appleY)){
             bodyParts++;
             applesEaten++;
+
+            if(applesEaten > highScore){
+                highScore = applesEaten;
+            }
+
+            if(applesEaten % 2 == 0 && timer.getDelay() > 100){
+                timer.setDelay(timer.getDelay() - 10);
+            }
             newApple();
         }
     }
@@ -163,6 +175,12 @@ public class GamePanel extends JPanel implements ActionListener{
         g.drawString("Score: " + applesEaten, (SCREEN_WIDTH - metrics.stringWidth("Score: " + applesEaten))/2, g.getFont().getSize());
     }
 
+    public void highScoreDisplay(Graphics g){
+            g.setColor(Color.red);
+            g.setFont(new Font("Times New Roman", Font.BOLD, 20));
+            g.drawString("High Score: " + highScore, 20, g.getFont().getSize());
+    }
+
     public void pauseDisplay(Graphics g){
         g.setColor(Color.blue);
         g.setFont(new Font("Times New Roman", Font.BOLD, 40));
@@ -174,6 +192,7 @@ public class GamePanel extends JPanel implements ActionListener{
         bodyParts = 6;
         applesEaten = 0;
         direction = 'R';
+        timer.setDelay(startingDelay);
         for(int i = 0; i < x.length; i++){
             x[i] = 0;
             y[i] = 0;
