@@ -1,10 +1,13 @@
 package ui;
 import difficulty.DifficultyBehaviour;
+import apple.AppleType;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.Random;
+import apple.Apple;
+import apple.AppleSpawner;
 
 public class GamePanel extends JPanel implements ActionListener{
     static final int SCREEN_WIDTH = 600;
@@ -15,8 +18,8 @@ public class GamePanel extends JPanel implements ActionListener{
     final int y[] = new int[GAME_UNITS];
     int bodyParts = 6;
     int applesEaten = 0;
-    int appleX;
-    int appleY;
+    Apple apple;
+    AppleSpawner appleSpawner;
     char direction = 'R'; //R = right, L = left, U = up, D = down;
     boolean running = false;
     Timer timer;
@@ -26,6 +29,7 @@ public class GamePanel extends JPanel implements ActionListener{
     boolean paused = false;
     int highScore = 0;
     int startingDelay;
+
     
 
     public GamePanel(DifficultyBehaviour difficulty){
@@ -37,6 +41,7 @@ public class GamePanel extends JPanel implements ActionListener{
         this.addKeyListener(new MyKeyAdapter());
         this.startingDelay = difficulty.getDelay();
         timer = new Timer(startingDelay, this);
+        appleSpawner = new AppleSpawner();
         
         restartButton = new JButton("Restart.");
         restartButton.setBounds(225, 350, 150, 40);
@@ -67,8 +72,8 @@ public class GamePanel extends JPanel implements ActionListener{
                 g.drawLine(i*UNIT_SIZE, 0, i*UNIT_SIZE, SCREEN_HEIGHT);
                 g.drawLine(0, i*UNIT_SIZE, SCREEN_WIDTH, i*UNIT_SIZE);
             }
-            g.setColor(Color.red);
-            g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
+            g.setColor(apple.getAppleType().getColor());
+            g.fillOval(apple.getX(), apple.getY(), UNIT_SIZE, UNIT_SIZE);
 
             for(int i = 0; i < bodyParts; i++){
                 if(i == 0){
@@ -91,8 +96,7 @@ public class GamePanel extends JPanel implements ActionListener{
     }
 
     public void newApple(){
-        appleX = random.nextInt((int)(SCREEN_WIDTH/UNIT_SIZE))*UNIT_SIZE;
-        appleY = random.nextInt((int)(SCREEN_HEIGHT/UNIT_SIZE))*UNIT_SIZE;
+        apple = appleSpawner.spawnApple(SCREEN_WIDTH, SCREEN_HEIGHT, UNIT_SIZE);
     }
 
     public void move(){
@@ -117,9 +121,9 @@ public class GamePanel extends JPanel implements ActionListener{
     }
 
     public void checkApple(){
-        if((x[0] == appleX) && (y[0] == appleY)){
+        if((x[0] == apple.getX()) && (y[0] == apple.getY())){
             bodyParts++;
-            applesEaten++;
+            applesEaten += apple.getPoints();
 
             if(applesEaten > highScore){
                 highScore = applesEaten;

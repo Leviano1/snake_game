@@ -19,7 +19,8 @@
 
 ## Gameplay improvements
 
-7. Golden apples worth 5 points
+7. Golden apples worth 3 points. ✅
+> Created a seperate apple package to organise apple-related behaviour. This package contains AppleSpawner, AppleType classes. AppleType is an enum that has REGULAR and GOLDEN apples. The Apple class stores the apple's position, type, colour, and point value, while AppleSpawner handles randomly creating regular or golden apples.
 8. Poison apples that shorten the snake
 9. Moving apples
 10. Timed apples that disappear after a few seconds
