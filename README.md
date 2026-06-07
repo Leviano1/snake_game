@@ -21,7 +21,8 @@
 
 7. Golden apples worth 3 points. ✅
 > Created a seperate apple package to organise apple-related behaviour. This package contains AppleSpawner, AppleType classes. AppleType is an enum that has REGULAR and GOLDEN apples. The Apple class stores the apple's position, type, colour, and point value, while AppleSpawner handles randomly creating regular or golden apples.
-8. Poison apples that shorten the snake
+8. Poison apples that shorten the snake. ✅
+> Created a POISENED apple type, added a checkPoisonApple() method inside the GamePanel class that checks if the poisoned apple has been eaten and shortens the snake by 1 body part and deducts 2 points from the score. Also i added the updatePoisonApple() method in GamePanel that ensures the duration of 7 seconds of poison apple being on a map.
 9. Moving apples
 10. Timed apples that disappear after a few seconds
 11. Walls/obstacles
@@ -69,7 +70,7 @@
 ## If I were picking the most educational, shortlist:
 
 1. Speed increases over time
-2. High score saving to a file
+2. High score saving to a file + maybe a leaderboard based on the data in the file
 3. Golden apples
 4. Obstacles/mazes
 5. Pause + restart menu

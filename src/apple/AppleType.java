@@ -4,7 +4,8 @@ import java.awt.*;
 
 public enum AppleType {
     REGULAR(1, Color.RED),
-    GOLDEN(3, Color.YELLOW);
+    GOLDEN(3, Color.YELLOW),
+    POISONED(-2, Color.MAGENTA);
 
     private final int points;
     private final Color color;

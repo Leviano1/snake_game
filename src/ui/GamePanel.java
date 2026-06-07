@@ -1,7 +1,5 @@
 package ui;
 import difficulty.DifficultyBehaviour;
-import apple.AppleType;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -19,7 +17,9 @@ public class GamePanel extends JPanel implements ActionListener{
     int bodyParts = 6;
     int applesEaten = 0;
     Apple apple;
+    Apple poisonApple;
     AppleSpawner appleSpawner;
+    long poisonAppleDuration;
     char direction = 'R'; //R = right, L = left, U = up, D = down;
     boolean running = false;
     Timer timer;
@@ -74,6 +74,10 @@ public class GamePanel extends JPanel implements ActionListener{
             }
             g.setColor(apple.getAppleType().getColor());
             g.fillOval(apple.getX(), apple.getY(), UNIT_SIZE, UNIT_SIZE);
+            if(poisonApple != null){
+                g.setColor(poisonApple.getAppleType().getColor());
+                g.fillOval(poisonApple.getX(), poisonApple.getY(), UNIT_SIZE, UNIT_SIZE);
+            }
 
             for(int i = 0; i < bodyParts; i++){
                 if(i == 0){
@@ -97,6 +101,13 @@ public class GamePanel extends JPanel implements ActionListener{
 
     public void newApple(){
         apple = appleSpawner.spawnApple(SCREEN_WIDTH, SCREEN_HEIGHT, UNIT_SIZE);
+    }
+
+    public void newPoisonApple(){
+        if(poisonApple == null && random.nextInt(8) == 0){
+            poisonApple = appleSpawner.spawnPoisonApple(SCREEN_WIDTH, SCREEN_HEIGHT, UNIT_SIZE);
+            poisonAppleDuration = System.currentTimeMillis();
+        }
     }
 
     public void move(){
@@ -133,7 +144,30 @@ public class GamePanel extends JPanel implements ActionListener{
                 timer.setDelay(timer.getDelay() - 10);
             }
             newApple();
+            newPoisonApple();
         }
+    }
+
+    public void checkPoisonApple(){
+        if(poisonApple != null && x[0] == poisonApple.getX() && y[0] == poisonApple.getY()){
+            bodyParts--;
+            applesEaten += poisonApple.getPoints();
+
+            if(applesEaten <= 0){
+                applesEaten = 0;
+            }
+            poisonApple = null;
+        }
+    }
+
+    public void updatePoisonApple(){
+        if(poisonApple != null){
+            long currentTime = System.currentTimeMillis();
+            if(currentTime - poisonAppleDuration >= 7000){
+                poisonApple = null;
+            }
+        }
+        
     }
 
     public void checkCollisions(){
@@ -212,6 +246,8 @@ public class GamePanel extends JPanel implements ActionListener{
         if(running && !paused){
             move();
             checkApple();
+            checkPoisonApple();
+            updatePoisonApple();
             checkCollisions(); 
         }
         repaint();
