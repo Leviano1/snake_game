@@ -14,6 +14,11 @@ public class GamePanel extends JPanel implements ActionListener{
     static final int GAME_UNITS = (SCREEN_WIDTH*SCREEN_HEIGHT)/UNIT_SIZE;
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
+    final int previousX[] = new int[GAME_UNITS];
+    final int previousY[] = new int[GAME_UNITS];
+    double animationProgress = 1.0;
+    int moveDelay;
+    Timer animationTimer;
     int bodyParts = 6;
     int applesEaten = 0;
     Apple apple;
@@ -40,7 +45,8 @@ public class GamePanel extends JPanel implements ActionListener{
         this.setLayout(null);
         this.addKeyListener(new MyKeyAdapter());
         this.startingDelay = difficulty.getDelay();
-        timer = new Timer(startingDelay, this);
+        this.moveDelay = startingDelay;
+        timer = new Timer(15, this); // runs every 15ms;
         appleSpawner = new AppleSpawner();
         
         restartButton = new JButton("Restart.");
@@ -58,7 +64,15 @@ public class GamePanel extends JPanel implements ActionListener{
         snakeColor = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
         newApple();
         running = true;
+        animationProgress = 1.0;
         timer.start();
+    }
+
+    public void previousPosition(){
+        for(int i = 0; i < bodyParts; i++){
+            previousX[i] = x[i];
+            previousY[i] = y[i];
+        }
     }
 
     public void paintComponent(Graphics g){
@@ -79,24 +93,31 @@ public class GamePanel extends JPanel implements ActionListener{
                 g.fillOval(poisonApple.getX(), poisonApple.getY(), UNIT_SIZE, UNIT_SIZE);
             }
 
-            for(int i = 0; i < bodyParts; i++){
-                if(i == 0){
-                    g.setColor(Color.green);
-                    g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE); //head of the snake;
-                }
-                else{
-                    g.setColor(snakeColor);
-                    g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE); //fill the rectangle;
-                }
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setStroke(new BasicStroke(UNIT_SIZE, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g2.setColor(snakeColor);
+
+            for(int i = bodyParts - 1; i > 0; i--){
+                int x1 = (int)(previousX[i] + (x[i] - previousX[i]) * animationProgress) + UNIT_SIZE / 2;
+                int y1 = (int)(previousY[i] + (y[i] - previousY[i]) * animationProgress) + UNIT_SIZE / 2;
+                int x2 = (int)(previousX[i - 1] + (x[i - 1] - previousX[i - 1]) * animationProgress) + UNIT_SIZE / 2;
+                int y2 = (int)(previousY[i - 1] + (y[i - 1] - previousY[i - 1]) * animationProgress) + UNIT_SIZE / 2;
+                g2.drawLine(x1, y1, x2, y2);
             }
+            int headX = (int)(previousX[0] + (x[0] - previousX[0]) * animationProgress);
+            int headY = (int)(previousY[0] + (y[0] - previousY[0]) * animationProgress);
+            g2.setColor(Color.green);
+            g2.fillOval(headX, headY, UNIT_SIZE, UNIT_SIZE);
+
             if(paused){
                 pauseDisplay(g);
             }
-        }else{
-            gameOver(g);
-        }
-        scoreDisplay(g);
-        highScoreDisplay(g);
+            }else{
+                gameOver(g);
+            }
+            scoreDisplay(g);
+            highScoreDisplay(g);
     }
 
     public void newApple(){
@@ -140,8 +161,8 @@ public class GamePanel extends JPanel implements ActionListener{
                 highScore = applesEaten;
             }
 
-            if(applesEaten % 2 == 0 && timer.getDelay() > 100){
-                timer.setDelay(timer.getDelay() - 10);
+            if(applesEaten % 2 == 0){
+                moveDelay = Math.max(80, moveDelay - 10);
             }
             newApple();
             newPoisonApple();
@@ -230,10 +251,14 @@ public class GamePanel extends JPanel implements ActionListener{
         bodyParts = 6;
         applesEaten = 0;
         direction = 'R';
-        timer.setDelay(startingDelay);
+
+        moveDelay = startingDelay;
+        animationProgress = 1.0;
         for(int i = 0; i < x.length; i++){
             x[i] = 0;
             y[i] = 0;
+            previousX[i] = 0;
+            previousY[i] = 0;
         }
 
         restartButton.setVisible(false);
@@ -244,11 +269,16 @@ public class GamePanel extends JPanel implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(running && !paused){
-            move();
-            checkApple();
-            checkPoisonApple();
-            updatePoisonApple();
-            checkCollisions(); 
+            animationProgress += 15.0 / moveDelay;
+            if(animationProgress >= 1.0){
+                animationProgress = 0.0;
+                previousPosition();
+                move();
+                checkApple();
+                checkPoisonApple();
+                updatePoisonApple();
+                checkCollisions();
+            } 
         }
         repaint();
     }

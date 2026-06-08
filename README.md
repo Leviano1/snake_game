@@ -23,7 +23,7 @@
 > Created a seperate apple package to organise apple-related behaviour. This package contains AppleSpawner, AppleType classes. AppleType is an enum that has REGULAR and GOLDEN apples. The Apple class stores the apple's position, type, colour, and point value, while AppleSpawner handles randomly creating regular or golden apples.
 8. Poison apples that shorten the snake. ✅
 > Created a POISENED apple type, added a checkPoisonApple() method inside the GamePanel class that checks if the poisoned apple has been eaten and shortens the snake by 1 body part and deducts 2 points from the score. Also i added the updatePoisonApple() method in GamePanel that ensures the duration of 7 seconds of poison apple being on a map.
-9. Moving apples
+9. Moving apples (xz , maybe do the visual improvement rather)
 10. Timed apples that disappear after a few seconds
 11. Walls/obstacles
 12. Random maze generation
