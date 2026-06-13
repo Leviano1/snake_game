@@ -11,11 +11,14 @@ public class GamePanel extends JPanel implements ActionListener{
     static final int SCREEN_WIDTH = 600;
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 50; //the size of each unit in the game, the snake and the apple will be in multiples of this unit size;
-    static final int GAME_UNITS = (SCREEN_WIDTH*SCREEN_HEIGHT)/UNIT_SIZE;
+    static final int GAME_UNITS = (SCREEN_WIDTH*SCREEN_HEIGHT) / (UNIT_SIZE * UNIT_SIZE);
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
     final int previousX[] = new int[GAME_UNITS];
     final int previousY[] = new int[GAME_UNITS];
+    static final int FRAME_DELAY = 16;
+    static final int SNAKE_THICKNESS = 35;
+    long lastFrameTime;
     double animationProgress = 1.0;
     int moveDelay;
     Timer animationTimer;
@@ -46,7 +49,7 @@ public class GamePanel extends JPanel implements ActionListener{
         this.addKeyListener(new MyKeyAdapter());
         this.startingDelay = difficulty.getDelay();
         this.moveDelay = startingDelay;
-        timer = new Timer(15, this); // runs every 15ms;
+        timer = new Timer(FRAME_DELAY, this); // runs every 15ms;
         appleSpawner = new AppleSpawner();
         
         restartButton = new JButton("Restart.");
@@ -65,6 +68,7 @@ public class GamePanel extends JPanel implements ActionListener{
         newApple();
         running = true;
         animationProgress = 1.0;
+        lastFrameTime = System.nanoTime();
         timer.start();
     }
 
@@ -95,7 +99,7 @@ public class GamePanel extends JPanel implements ActionListener{
 
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setStroke(new BasicStroke(UNIT_SIZE, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g2.setStroke(new BasicStroke(SNAKE_THICKNESS, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             g2.setColor(snakeColor);
 
             for(int i = bodyParts - 1; i > 0; i--){
@@ -105,10 +109,20 @@ public class GamePanel extends JPanel implements ActionListener{
                 int y2 = (int)(previousY[i - 1] + (y[i - 1] - previousY[i - 1]) * animationProgress) + UNIT_SIZE / 2;
                 g2.drawLine(x1, y1, x2, y2);
             }
+            int tailIndex = bodyParts - 1;
+            int tailX = (int)(previousX[tailIndex] + (x[tailIndex] - previousX[tailIndex]) * animationProgress);
+            int tailY = (int)(previousY[tailIndex] + (y[tailIndex] - previousY[tailIndex]) * animationProgress);
+            int tailSize = SNAKE_THICKNESS - 8;
+            int tailOffSet = (UNIT_SIZE - tailSize) / 2; //centers the bodyPart inside the grid square;
+            g2.setColor(snakeColor);
+            g2.fillOval(tailX + tailOffSet, tailY + tailOffSet, tailSize, tailSize);
             int headX = (int)(previousX[0] + (x[0] - previousX[0]) * animationProgress);
             int headY = (int)(previousY[0] + (y[0] - previousY[0]) * animationProgress);
+            int headSize = SNAKE_THICKNESS + 4;
+            int headOffset = (UNIT_SIZE - headSize) /2;
+            
             g2.setColor(Color.green);
-            g2.fillOval(headX, headY, UNIT_SIZE, UNIT_SIZE);
+            g2.fillOval(headX + headOffset, headY + headOffset, headSize, headSize);
 
             if(paused){
                 pauseDisplay(g);
@@ -132,7 +146,7 @@ public class GamePanel extends JPanel implements ActionListener{
     }
 
     public void move(){
-        for(int i = bodyParts; i > 0; i--){
+        for(int i = bodyParts -1; i > 0; i--){
             x[i] = x[i-1];
             y[i] = y[i-1];
         }
@@ -155,6 +169,10 @@ public class GamePanel extends JPanel implements ActionListener{
     public void checkApple(){
         if((x[0] == apple.getX()) && (y[0] == apple.getY())){
             bodyParts++;
+            x[bodyParts - 1] = x[bodyParts - 2];
+            y[bodyParts - 1] = y[bodyParts - 2];
+            previousX[bodyParts - 1] = x[bodyParts - 2];
+            previousY[bodyParts - 1] = y[bodyParts - 2];
             applesEaten += apple.getPoints();
 
             if(applesEaten > highScore){
@@ -268,10 +286,14 @@ public class GamePanel extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        long now = System.nanoTime();
+        double deltaTime = (now - lastFrameTime) / 1_000_000.0;
+        lastFrameTime = now;
+
         if(running && !paused){
-            animationProgress += 15.0 / moveDelay;
-            if(animationProgress >= 1.0){
-                animationProgress = 0.0;
+            animationProgress += deltaTime / moveDelay;
+            while(animationProgress >= 1.0){
+                animationProgress -= 1.0;
                 previousPosition();
                 move();
                 checkApple();
