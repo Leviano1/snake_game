@@ -35,7 +35,10 @@
 15. Gradient snake body
 16. Particle effects when eating apples
 17. Score popups (+1, +5)
-18. Smooth movement instead of grid jumping
+18. Smooth movement instead of grid jumping. ✅
+> Positions use previousX, previousY, x, and y with animationProgress so the snake moves smoothly between grid squares instead of jumping instantly. I'm gonna say that it works , because i don't really know how to make it even smoother, so i'll let it be like this for now.
+19. Snake thickness decreases gradually from head towards tail. ✅
+> For each segment, "double t" first calculates how far that segment is from the tail toward the head. t becomes a value between 0 and 1. Near the tail, t is close to 0. Near the head, t is closer to 1. Then the "partSize" uses t to calculate the thickness of that part of the snake.
 
 ## More challenging mechanics
 

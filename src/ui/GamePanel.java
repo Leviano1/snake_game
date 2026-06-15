@@ -99,31 +99,31 @@ public class GamePanel extends JPanel implements ActionListener{
 
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setStroke(new BasicStroke(SNAKE_THICKNESS, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             g2.setColor(snakeColor);
 
+            int headSize = SNAKE_THICKNESS + 6;
+            int tailSize = SNAKE_THICKNESS - 4;
+            int bodySize = SNAKE_THICKNESS;
+
             for(int i = bodyParts - 1; i > 0; i--){
+                double t = 1.0 - ((double)i / (bodyParts - 1)); //controls how big the segment should be;
+                int partSize = (int)(tailSize + (bodySize - tailSize) * t);
+
                 int x1 = (int)(previousX[i] + (x[i] - previousX[i]) * animationProgress) + UNIT_SIZE / 2;
                 int y1 = (int)(previousY[i] + (y[i] - previousY[i]) * animationProgress) + UNIT_SIZE / 2;
                 int x2 = (int)(previousX[i - 1] + (x[i - 1] - previousX[i - 1]) * animationProgress) + UNIT_SIZE / 2;
                 int y2 = (int)(previousY[i - 1] + (y[i - 1] - previousY[i - 1]) * animationProgress) + UNIT_SIZE / 2;
+
+                g2.setStroke(new BasicStroke(partSize, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
                 g2.drawLine(x1, y1, x2, y2);
             }
-            int tailIndex = bodyParts - 1;
-            int tailX = (int)(previousX[tailIndex] + (x[tailIndex] - previousX[tailIndex]) * animationProgress);
-            int tailY = (int)(previousY[tailIndex] + (y[tailIndex] - previousY[tailIndex]) * animationProgress);
-            int tailSize = SNAKE_THICKNESS - 8;
-            int tailOffSet = (UNIT_SIZE - tailSize) / 2; //centers the bodyPart inside the grid square;
-            g2.setColor(snakeColor);
-            g2.fillOval(tailX + tailOffSet, tailY + tailOffSet, tailSize, tailSize);
+
             int headX = (int)(previousX[0] + (x[0] - previousX[0]) * animationProgress);
             int headY = (int)(previousY[0] + (y[0] - previousY[0]) * animationProgress);
-            int headSize = SNAKE_THICKNESS + 4;
-            int headOffset = (UNIT_SIZE - headSize) /2;
-            
+            int headOffset = (UNIT_SIZE - headSize) / 2;
             g2.setColor(Color.green);
             g2.fillOval(headX + headOffset, headY + headOffset, headSize, headSize);
-
+            
             if(paused){
                 pauseDisplay(g);
             }
