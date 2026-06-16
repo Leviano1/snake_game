@@ -39,7 +39,10 @@
 > Positions use previousX, previousY, x, and y with animationProgress so the snake moves smoothly between grid squares instead of jumping instantly. I'm gonna say that it works , because i don't really know how to make it even smoother, so i'll let it be like this for now.
 19. Snake thickness decreases gradually from head towards tail. ✅
 > For each segment, "double t" first calculates how far that segment is from the tail toward the head. t becomes a value between 0 and 1. Near the tail, t is close to 0. Near the head, t is closer to 1. Then the "partSize" uses t to calculate the thickness of that part of the snake.
-
+20. Add visual image-based snake design. ✅
+> Added PNG-based assets to improve the snake's appearance, this includes a snake head image and a snake skin texture.
+> Updated the snake body rendering to use the skin image as a repeated texture instead of a plain colour.
+> Implemented head rotation logic so the head image turns to match the snake's current direction.
 ## More challenging mechanics
 
 19. Wrap-around map

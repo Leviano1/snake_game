@@ -2,6 +2,9 @@ package ui;
 import difficulty.DifficultyBehaviour;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.util.Random;
 import apple.Apple;
@@ -37,7 +40,10 @@ public class GamePanel extends JPanel implements ActionListener{
     boolean paused = false;
     int highScore = 0;
     int startingDelay;
-
+    Image snakeHeadImage = new ImageIcon("src/images/snakeHead.png").getImage();
+    BufferedImage snakeSkinImage;
+    double currentHeadAngle = getHeadAngle(direction);
+    double targetHeadAngle = getHeadAngle(direction);
     
 
     public GamePanel(DifficultyBehaviour difficulty){
@@ -51,7 +57,11 @@ public class GamePanel extends JPanel implements ActionListener{
         this.moveDelay = startingDelay;
         timer = new Timer(FRAME_DELAY, this); // runs every 15ms;
         appleSpawner = new AppleSpawner();
-        
+        try{
+            snakeSkinImage = ImageIO.read(getClass().getResource("/images/snakeSkin.png"));
+        }catch(Exception e){
+            System.out.println("Could not load snake skin image.");
+        }
         restartButton = new JButton("Restart.");
         restartButton.setBounds(225, 350, 150, 40);
         restartButton.setVisible(false);
@@ -98,12 +108,14 @@ public class GamePanel extends JPanel implements ActionListener{
             }
 
             Graphics2D g2 = (Graphics2D) g;
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(snakeColor);
+            Rectangle textureRect = new Rectangle(0, 0, 150, 150);
+            TexturePaint snakeSkin = new TexturePaint(snakeSkinImage, textureRect);
+            g2.setPaint(snakeSkin);
 
-            int headSize = SNAKE_THICKNESS + 6;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             int tailSize = SNAKE_THICKNESS - 4;
             int bodySize = SNAKE_THICKNESS;
+            int headSize = UNIT_SIZE;
 
             for(int i = bodyParts - 1; i > 0; i--){
                 double t = 1.0 - ((double)i / (bodyParts - 1)); //controls how big the segment should be;
@@ -113,17 +125,34 @@ public class GamePanel extends JPanel implements ActionListener{
                 int y1 = (int)(previousY[i] + (y[i] - previousY[i]) * animationProgress) + UNIT_SIZE / 2;
                 int x2 = (int)(previousX[i - 1] + (x[i - 1] - previousX[i - 1]) * animationProgress) + UNIT_SIZE / 2;
                 int y2 = (int)(previousY[i - 1] + (y[i - 1] - previousY[i - 1]) * animationProgress) + UNIT_SIZE / 2;
+                
+                // If this segment connects to the head, stop it at the edge of the head.
+                if(i == 1){
+                    double dx = x2 - x1;
+                    double dy = y2 - y1;
+                    double distance = Math.sqrt(dx * dx + dy * dy);
+
+                    double headRadius = headSize / 2.0 - 3;
+
+                    x2 = (int)(x2 - (dx / distance) * headRadius);
+                    y2 = (int)(y2 - (dy / distance) * headRadius);
+                }
 
                 g2.setStroke(new BasicStroke(partSize, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
                 g2.drawLine(x1, y1, x2, y2);
             }
-
-            int headX = (int)(previousX[0] + (x[0] - previousX[0]) * animationProgress);
-            int headY = (int)(previousY[0] + (y[0] - previousY[0]) * animationProgress);
-            int headOffset = (UNIT_SIZE - headSize) / 2;
-            g2.setColor(Color.green);
-            g2.fillOval(headX + headOffset, headY + headOffset, headSize, headSize);
+            int imageSize = UNIT_SIZE + 12;
+            int imageOffSet = (UNIT_SIZE - imageSize) / 2;
+            int headX = (int)(previousX[0] + (x[0] - previousX[0]) * animationProgress) + imageOffSet;
+            int headY = (int)(previousY[0] + (y[0] - previousY[0]) * animationProgress) + imageOffSet;
             
+            int centerX = headX + imageSize / 2;
+            int centerY = headY + imageSize / 2;
+            Graphics2D headG = (Graphics2D) g2.create();
+            headG.rotate(currentHeadAngle, centerX, centerY);
+            headG.drawImage(snakeHeadImage, headX, headY, imageSize, imageSize, null);
+            headG.dispose();
+
             if(paused){
                 pauseDisplay(g);
             }
@@ -143,6 +172,35 @@ public class GamePanel extends JPanel implements ActionListener{
             poisonApple = appleSpawner.spawnPoisonApple(SCREEN_WIDTH, SCREEN_HEIGHT, UNIT_SIZE);
             poisonAppleDuration = System.currentTimeMillis();
         }
+    }
+
+    public double getHeadAngle(char direction){
+        switch(direction){
+            case 'U':
+                return Math.PI;
+            case 'D':
+                return 0;
+            case 'L':
+                return Math.PI / 2;
+            case 'R':
+                return -Math.PI / 2;
+            default:
+                return 0;
+        }
+    }
+
+    public void updateHeadAngle(){
+        double difference = targetHeadAngle - currentHeadAngle;
+
+        while(difference > Math.PI){
+            difference -= Math.PI * 2;
+        }
+
+        while(difference < -Math.PI){
+            difference += Math.PI * 2;
+        }
+
+        currentHeadAngle += difference * 0.2;
     }
 
     public void move(){
@@ -292,6 +350,7 @@ public class GamePanel extends JPanel implements ActionListener{
 
         if(running && !paused){
             animationProgress += deltaTime / moveDelay;
+            updateHeadAngle();
             while(animationProgress >= 1.0){
                 animationProgress -= 1.0;
                 previousPosition();
@@ -312,27 +371,32 @@ public class GamePanel extends JPanel implements ActionListener{
                 case KeyEvent.VK_LEFT:
                     if(direction != 'R'){
                         direction = 'L';
+                        targetHeadAngle = getHeadAngle(direction);
                     }
                     break;
                 case KeyEvent.VK_RIGHT:
                     if(direction != 'L'){
                         direction = 'R';
+                        targetHeadAngle = getHeadAngle(direction);
                     }
                     break;
                 case KeyEvent.VK_UP:
                     if(direction != 'D'){
                         direction = 'U';
+                        targetHeadAngle = getHeadAngle(direction);
                     }
                     break;
                 case KeyEvent.VK_DOWN:
                     if(direction != 'U'){
                         direction = 'D';
+                        targetHeadAngle = getHeadAngle(direction);
                     }
                     break;
                 case KeyEvent.VK_P:
                         paused = !paused;
                         break;
             }
+            repaint();
         }
     }
 
