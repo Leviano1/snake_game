@@ -41,6 +41,7 @@ public class GamePanel extends JPanel implements ActionListener{
     int highScore = 0;
     int startingDelay;
     Image snakeHeadImage = new ImageIcon("src/images/snakeHead.png").getImage();
+    Image redAppleImage = new ImageIcon("src/images/redApple.png").getImage();
     BufferedImage snakeSkinImage;
     double currentHeadAngle = getHeadAngle(direction);
     double targetHeadAngle = getHeadAngle(direction);
@@ -96,15 +97,23 @@ public class GamePanel extends JPanel implements ActionListener{
 
     public void draw(Graphics g){
         if(running){
-            for(int i = 0; i < SCREEN_HEIGHT/UNIT_SIZE; i++){
-                g.drawLine(i*UNIT_SIZE, 0, i*UNIT_SIZE, SCREEN_HEIGHT);
-                g.drawLine(0, i*UNIT_SIZE, SCREEN_WIDTH, i*UNIT_SIZE);
+            //Color lightSandyTile = new Color(242, 216, 143);
+            //Color darkSandyTile = new Color(230, 197, 112);
+            Color lightTile = new Color(78, 72, 88);
+            Color darkTile = new Color(68, 62, 78);
+            for(int row = 0; row < SCREEN_HEIGHT/UNIT_SIZE; row++){
+                for(int col = 0; col < SCREEN_WIDTH/UNIT_SIZE; col++){
+                    if((row + col) % 2 == 0){
+                        g.setColor(lightTile);
+                    }else{
+                        g.setColor(darkTile);
+                    }
+                    g.fillRect(col * UNIT_SIZE, row * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE);
+                }
             }
-            g.setColor(apple.getAppleType().getColor());
-            g.fillOval(apple.getX(), apple.getY(), UNIT_SIZE, UNIT_SIZE);
+            drawApple(g, apple);
             if(poisonApple != null){
-                g.setColor(poisonApple.getAppleType().getColor());
-                g.fillOval(poisonApple.getX(), poisonApple.getY(), UNIT_SIZE, UNIT_SIZE);
+                drawApple(g, poisonApple);
             }
 
             Graphics2D g2 = (Graphics2D) g;
@@ -161,6 +170,22 @@ public class GamePanel extends JPanel implements ActionListener{
             }
             scoreDisplay(g);
             highScoreDisplay(g);
+    }
+
+    public void drawApple(Graphics g, Apple apple){
+        Image appleImage = new ImageIcon(getClass().getResource(apple.getAppleType().getImagePath())).getImage();
+
+        int appleSize = UNIT_SIZE + 12;
+        int appleOffset = (UNIT_SIZE - appleSize) / 2;
+
+        g.drawImage(
+            appleImage,
+            apple.getX() + appleOffset,
+            apple.getY() + appleOffset,
+            appleSize,
+            appleSize,
+            null
+        );
     }
 
     public void newApple(){

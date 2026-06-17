@@ -43,6 +43,9 @@
 > Added PNG-based assets to improve the snake's appearance, this includes a snake head image and a snake skin texture.
 > Updated the snake body rendering to use the skin image as a repeated texture instead of a plain colour.
 > Implemented head rotation logic so the head image turns to match the snake's current direction.
+21. Add background image.
+22. Add different apple's images.
+23. Bugs: the rotten apple countdown still goes,even when the game is paused. The head snake can point in different side after the game is restarted. 
 ## More challenging mechanics
 
 19. Wrap-around map
