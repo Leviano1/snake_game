@@ -43,9 +43,11 @@
 > Added PNG-based assets to improve the snake's appearance, this includes a snake head image and a snake skin texture.
 > Updated the snake body rendering to use the skin image as a repeated texture instead of a plain colour.
 > Implemented head rotation logic so the head image turns to match the snake's current direction.
-21. Add background image.
-22. Add different apple's images.
-23. Bugs: the rotten apple countdown still goes,even when the game is paused. The head snake can point in different side after the game is restarted. 
+21. Add background image. ✅
+22. Add different apple's images. ✅
+23. Bugs: the rotten apple countdown still goes,even when the game is paused. The head snake can point in different side after the game is restarted. ✅ (fixed).
+24. Bugs: laggy, because of "Image appleImage = new ImageIcon(getClass().getResource(apple.getAppleType().getImagePath())).getImage();" in the drawApple() method. That was loading apple images every repaint, around 60 times per second.
+
 ## More challenging mechanics
 
 19. Wrap-around map

@@ -45,6 +45,7 @@ public class GamePanel extends JPanel implements ActionListener{
     BufferedImage snakeSkinImage;
     double currentHeadAngle = getHeadAngle(direction);
     double targetHeadAngle = getHeadAngle(direction);
+    long pauseStartTime;
     
 
     public GamePanel(DifficultyBehaviour difficulty){
@@ -352,7 +353,10 @@ public class GamePanel extends JPanel implements ActionListener{
         bodyParts = 6;
         applesEaten = 0;
         direction = 'R';
-
+        currentHeadAngle = getHeadAngle(direction);
+        targetHeadAngle = getHeadAngle(direction);
+        paused = false;
+        poisonApple = null;
         moveDelay = startingDelay;
         animationProgress = 1.0;
         for(int i = 0; i < x.length; i++){
@@ -418,8 +422,17 @@ public class GamePanel extends JPanel implements ActionListener{
                     }
                     break;
                 case KeyEvent.VK_P:
-                        paused = !paused;
-                        break;
+                    if(!paused){
+                        pauseStartTime = System.currentTimeMillis();
+                        paused = true;
+                    }else{
+                        long pausedDuration = System.currentTimeMillis() - pauseStartTime;
+                        if(poisonApple != null){
+                            poisonAppleDuration += pausedDuration;
+                        }
+                        paused = false;
+                    }
+                    break;
             }
             repaint();
         }
