@@ -46,7 +46,8 @@
 21. Add background image. ✅
 22. Add different apple's images. ✅
 23. Bugs: the rotten apple countdown still goes,even when the game is paused. The head snake can point in different side after the game is restarted. ✅ (fixed).
-24. Bugs: laggy, because of "Image appleImage = new ImageIcon(getClass().getResource(apple.getAppleType().getImagePath())).getImage();" in the drawApple() method. That was loading apple images every repaint, around 60 times per second.
+24. Bugs: laggy, because of "Image appleImage = new ImageIcon(getClass().getResource(apple.getAppleType().getImagePath())).getImage();" in the drawApple() method. That was loading apple images every repaint, around 60 times per second. ✅ (fixed).
+> Created an ImageManager class, that handles the load of urls for different types of images. With ImageManager, the images are already loaded once here: "imageManager = new ImageManager();" and the drawApple() just accesses them in the constructor, instead of loading the appleImage everytime the method is called.
 
 ## More challenging mechanics
 

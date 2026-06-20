@@ -1,5 +1,7 @@
 package ui;
 import difficulty.DifficultyBehaviour;
+import render.ImageManager;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -9,6 +11,7 @@ import javax.swing.*;
 import java.util.Random;
 import apple.Apple;
 import apple.AppleSpawner;
+import apple.AppleType;
 
 public class GamePanel extends JPanel implements ActionListener{
     static final int SCREEN_WIDTH = 600;
@@ -29,6 +32,7 @@ public class GamePanel extends JPanel implements ActionListener{
     int applesEaten = 0;
     Apple apple;
     Apple poisonApple;
+    AppleType appleType;
     AppleSpawner appleSpawner;
     long poisonAppleDuration;
     char direction = 'R'; //R = right, L = left, U = up, D = down;
@@ -40,9 +44,8 @@ public class GamePanel extends JPanel implements ActionListener{
     boolean paused = false;
     int highScore = 0;
     int startingDelay;
-    Image snakeHeadImage = new ImageIcon("src/images/snakeHead.png").getImage();
-    Image redAppleImage = new ImageIcon("src/images/redApple.png").getImage();
-    BufferedImage snakeSkinImage;
+    ImageManager imageManager;
+    TexturePaint snakeSkin;
     double currentHeadAngle = getHeadAngle(direction);
     double targetHeadAngle = getHeadAngle(direction);
     long pauseStartTime;
@@ -50,6 +53,12 @@ public class GamePanel extends JPanel implements ActionListener{
 
     public GamePanel(DifficultyBehaviour difficulty){
         random = new Random();
+        imageManager = new ImageManager();
+        BufferedImage snakeSkinImage = imageManager.getSnakeSkinImage();
+        if(snakeSkinImage != null){
+            Rectangle textureRect = new Rectangle(0, 0, 150, 150);
+            snakeSkin = new TexturePaint(snakeSkinImage, textureRect);
+        }
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.black);
         this.setFocusable(true);
@@ -59,11 +68,6 @@ public class GamePanel extends JPanel implements ActionListener{
         this.moveDelay = startingDelay;
         timer = new Timer(FRAME_DELAY, this); // runs every 15ms;
         appleSpawner = new AppleSpawner();
-        try{
-            snakeSkinImage = ImageIO.read(getClass().getResource("/images/snakeSkin.png"));
-        }catch(Exception e){
-            System.out.println("Could not load snake skin image.");
-        }
         restartButton = new JButton("Restart.");
         restartButton.setBounds(225, 350, 150, 40);
         restartButton.setVisible(false);
@@ -118,9 +122,11 @@ public class GamePanel extends JPanel implements ActionListener{
             }
 
             Graphics2D g2 = (Graphics2D) g;
-            Rectangle textureRect = new Rectangle(0, 0, 150, 150);
-            TexturePaint snakeSkin = new TexturePaint(snakeSkinImage, textureRect);
-            g2.setPaint(snakeSkin);
+            if(snakeSkin != null){
+                g2.setPaint(snakeSkin);
+            }else{
+                g2.setColor(snakeColor);
+            }
 
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             int tailSize = SNAKE_THICKNESS - 4;
@@ -160,7 +166,7 @@ public class GamePanel extends JPanel implements ActionListener{
             int centerY = headY + imageSize / 2;
             Graphics2D headG = (Graphics2D) g2.create();
             headG.rotate(currentHeadAngle, centerX, centerY);
-            headG.drawImage(snakeHeadImage, headX, headY, imageSize, imageSize, null);
+            headG.drawImage(imageManager.getSnakeHeadImage(), headX, headY, imageSize, imageSize, null);
             headG.dispose();
 
             if(paused){
@@ -174,7 +180,7 @@ public class GamePanel extends JPanel implements ActionListener{
     }
 
     public void drawApple(Graphics g, Apple apple){
-        Image appleImage = new ImageIcon(getClass().getResource(apple.getAppleType().getImagePath())).getImage();
+        Image appleImage = imageManager.getAppleImage(apple.getAppleType());
 
         int appleSize = UNIT_SIZE + 12;
         int appleOffset = (UNIT_SIZE - appleSize) / 2;
