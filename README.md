@@ -88,3 +88,13 @@
 5. Pause + restart menu
 6. Power-ups
 7. 2-player snake
+
+## How the game is being refactored:
+![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
+![alt text](image-4.png)
+![alt text](image-6.png)
+![alt text](image-7.png)
+![alt text](image-5.png)
