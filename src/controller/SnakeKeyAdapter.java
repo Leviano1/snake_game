@@ -4,7 +4,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import model.Direction;
-import model.Snake;
 
 public class SnakeKeyAdapter extends KeyAdapter {
     private final GameController gameController;

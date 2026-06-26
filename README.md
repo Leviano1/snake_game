@@ -98,3 +98,5 @@
 ![alt text](image-6.png)
 ![alt text](image-7.png)
 ![alt text](image-5.png)
+Each of the snake's body part is drawn using a seperate method.
+Now just change the GamePanel.

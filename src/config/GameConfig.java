@@ -20,8 +20,8 @@ public class GameConfig {
     public static final Color DARK_TILE = new Color(68, 62, 78);
     //Color lightSandyTile = new Color(242, 216, 143);
     //Color darkSandyTile = new Color(230, 197, 112);
-    //public static final Color PAUSE_TEXT = Color.BLUE;
-    //public static final Color HUD_TEXT = Color.RED;
+    public static final Color PAUSE_TEXT = Color.BLUE;
+    public static final Color HUD_TEXT = Color.RED;
 
     private GameConfig(){
     }
