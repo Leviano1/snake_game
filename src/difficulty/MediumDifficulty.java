@@ -1,7 +1,7 @@
 package difficulty;
 
 public class MediumDifficulty implements DifficultyBehaviour {
-    private final static int DELAY = 200; 
+    private final static int DELAY = 250; 
 
     @Override
     public int getDelay() {

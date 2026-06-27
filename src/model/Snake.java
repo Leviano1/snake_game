@@ -11,7 +11,7 @@ public class Snake {
     private Direction direction;
 
     public Snake(){
-        x = new int[GameConfig.UNIT_SIZE];
+        x = new int[GameConfig.GAME_UNITS];
         y = new int[GameConfig.GAME_UNITS];
         previousX = new int[GameConfig.GAME_UNITS];
         previousY = new int[GameConfig.GAME_UNITS];
@@ -22,10 +22,10 @@ public class Snake {
         direction = Direction.RIGHT;
 
         for(int i = 0; i < bodyParts; i++){
-            x[i] = (bodyParts - i - 1) * GameConfig.UNIT_SIZE;
+            x[i] = 0;
             y[i] = 0;
-            previousX[i] = x[i];
-            previousY[i] = y[i];
+            previousX[i] = 0;
+            previousY[i] = 0;
         }
     }
 

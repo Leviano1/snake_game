@@ -36,10 +36,12 @@ public class GameController {
     }
 
     public void restartGame(){
+        snake.reset();
         applesEaten = 0;
         moveDelay = startDelay;
-        //paused = false;
-        //poisonApple = null;    
+        paused = false;
+        running = true;
+        poisonApple = null;    
         animationProgress = 1.0;
         currentHeadAngle = getHeadAngle(snake.getDirection());
         targetHeadAngle = currentHeadAngle;

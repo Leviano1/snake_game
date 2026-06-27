@@ -19,13 +19,28 @@ import model.Snake;
 
 public class GameRender {
     private final ImageManager imageManager;
+    private final TexturePaint snakeSkinPaint;
+    private final BufferedImage boardImage;
+    private int frames = 0;
+    private int fps = 0;
+    private long lastFpsTime = System.nanoTime();
 
     public GameRender(){
         imageManager = new ImageManager();
+        BufferedImage snakeSkinImage = imageManager.getSnakeSkinImage();
+        if(snakeSkinImage != null){
+            snakeSkinPaint = new TexturePaint(snakeSkinImage, new Rectangle(0, 0, 150, 150));
+        }else{
+            snakeSkinPaint = null;
+        }
+        boardImage = createBoardImage();
     }
 
     public void render(Graphics g, GameController gameController){
         drawBoard(g);
+        drawScore(g, gameController.getApplesEaten());
+        drawFPS(g);
+        drawHighScore(g, gameController.getHighScore());
         if(gameController.isRunning()){
             drawApple(g, gameController.getApple());
             if(gameController.getPoisonApple() != null){
@@ -42,16 +57,37 @@ public class GameRender {
     }
 
     public void drawBoard(Graphics g){
-        for(int row = 0; row < GameConfig.SCREEN_HEIGHT/GameConfig.UNIT_SIZE; row++){
-            for(int col = 0; col < GameConfig.SCREEN_WIDTH/GameConfig.UNIT_SIZE; col++){
+        g.drawImage(boardImage, 0, 0, null);
+    }
+
+    private BufferedImage createBoardImage(){
+        BufferedImage image = new BufferedImage(
+            GameConfig.SCREEN_WIDTH,
+            GameConfig.SCREEN_HEIGHT,
+            BufferedImage.TYPE_INT_ARGB
+        );
+
+        Graphics2D g2 = image.createGraphics();
+
+        for(int row = 0; row < GameConfig.SCREEN_HEIGHT / GameConfig.UNIT_SIZE; row++){
+            for(int col = 0; col < GameConfig.SCREEN_WIDTH / GameConfig.UNIT_SIZE; col++){
                 if((row + col) % 2 == 0){
-                    g.setColor(GameConfig.LIGHT_TILE);
+                    g2.setColor(GameConfig.LIGHT_TILE);
                 }else{
-                    g.setColor(GameConfig.DARK_TILE);
+                    g2.setColor(GameConfig.DARK_TILE);
                 }
-                g.fillRect(col * GameConfig.UNIT_SIZE, row * GameConfig.UNIT_SIZE, GameConfig.UNIT_SIZE, GameConfig.UNIT_SIZE);
+
+                g2.fillRect(
+                    col * GameConfig.UNIT_SIZE,
+                    row * GameConfig.UNIT_SIZE,
+                    GameConfig.UNIT_SIZE,
+                    GameConfig.UNIT_SIZE
+                );
             }
         }
+
+        g2.dispose();
+        return image;
     }
 
     public void drawApple(Graphics g, Apple apple){
@@ -111,10 +147,8 @@ public class GameRender {
     }
 
     public void setSnakeBodyPaint(Graphics2D g2){
-        BufferedImage snakeSkinImage = imageManager.getSnakeSkinImage();
-        if(snakeSkinImage != null){
-            TexturePaint snakeSkin = new TexturePaint(snakeSkinImage, new Rectangle(0, 0, 150, 150));
-            g2.setPaint(snakeSkin);
+        if(snakeSkinPaint != null){
+            g2.setPaint(snakeSkinPaint);
         }else{
             g2.setColor(new Color(120, 190, 60)); //green;
         }
@@ -145,7 +179,7 @@ public class GameRender {
     }
 
     public void drawGameOver(Graphics g){ 
-        g.setColor(Color.red);
+        g.setColor(Color.PINK);
         g.setFont(new Font("Times New Roman", Font.BOLD, 40));
         FontMetrics metrics = g.getFontMetrics(); //this is used to center the text on the screen;
         g.drawString("Game Over.", (GameConfig.SCREEN_WIDTH - metrics.stringWidth("Game Over."))/2, GameConfig.SCREEN_HEIGHT/2);
@@ -153,22 +187,37 @@ public class GameRender {
 
     public void drawScore(Graphics g, int score){
         g.setColor(GameConfig.HUD_TEXT);
-        g.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        g.setFont(new Font("Times New Roman", Font.BOLD, 16));
         FontMetrics metrics = g.getFontMetrics(); //this is used to center the text on the screen;
         g.drawString("Score: " + score, (GameConfig.SCREEN_WIDTH - metrics.stringWidth("Score: " + score))/2, g.getFont().getSize());
     }
 
     public void drawHighScore(Graphics g, int highScore){
         g.setColor(GameConfig.HUD_TEXT);
-        g.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        g.setFont(new Font("Times New Roman", Font.BOLD, 16));
         g.drawString("High Score: " + highScore, 20, g.getFont().getSize());
     }
 
     public void drawPauseMessage(Graphics g){
-        g.setColor(Color.blue);
+        g.setColor(GameConfig.PAUSE_TEXT);
         g.setFont(new Font("Times New Roman", Font.BOLD, 40));
         FontMetrics metrics = g.getFontMetrics();
         g.drawString("Game is paused.", (GameConfig.SCREEN_WIDTH - metrics.stringWidth("Game is paused."))/2, GameConfig.SCREEN_HEIGHT/2);
+    }
+
+    public void drawFPS(Graphics g){
+        frames++;
+
+        long now = System.nanoTime();
+        if(now - lastFpsTime >= GameConfig.FPS_SAMPLE_INTERVAL_NANOS){
+            fps = frames * 2;
+            frames = 0;
+            lastFpsTime = now;
+        }
+
+        g.setColor(Color.PINK);
+        g.setFont(new Font("Times New Roman", Font.BOLD, 16));
+        g.drawString("FPS: " + fps, 520, 20);
     }
 
 }
