@@ -6,10 +6,12 @@ import config.GameConfig;
 import difficulty.DifficultyBehaviour;
 import model.Direction;
 import model.Snake;
+import render.SoundManager;
 
 public class GameController {
     private final Snake snake;
     private final AppleSpawner appleSpawner;
+    private final SoundManager soundManager;
     private final int startDelay;
 
     private Apple apple;
@@ -30,6 +32,7 @@ public class GameController {
     public GameController(DifficultyBehaviour difficulty){
         snake = new Snake();
         appleSpawner = new AppleSpawner();
+        soundManager = new SoundManager();
         startDelay = difficulty.getDelay(); //maybe rename this one;
         highScore = 0;
         restartGame();
@@ -86,6 +89,7 @@ public class GameController {
         if(snake.getHeadX() == apple.getX() && snake.getHeadY() == apple.getY()){
             snake.grow();
             applesEaten += apple.getPoints();
+            soundManager.playFoodSound();
 
             if(applesEaten > highScore){
                 highScore = applesEaten;
@@ -110,6 +114,7 @@ public class GameController {
         if(poisonApple != null && snake.getHeadX() == poisonApple.getX() && snake.getHeadY() == poisonApple.getY()){
             snake.shrink();
             applesEaten += poisonApple.getPoints();
+            soundManager.playFoodSound();
 
             if(applesEaten <= 0){
                 applesEaten = 0;
@@ -130,6 +135,7 @@ public class GameController {
     public void checkCollisions(){
         if(snake.collidesWithSelf() || snake.isOutsideBoard()){
             running = false;
+            soundManager.playGameOverSound();
         }
     }
 
@@ -165,6 +171,7 @@ public class GameController {
     public void changeDirection(Direction direction){
         if(snake.changeDirection(direction)){
             targetHeadAngle = getHeadAngle(direction);
+            soundManager.playMoveSound();
         }
     }
 

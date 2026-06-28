@@ -26,7 +26,7 @@ public class GamePanel extends JPanel implements ActionListener{
         setFocusable(true);
         setLayout(null);
         addKeyListener(new SnakeKeyAdapter(gameController, this::repaint));
-        restartButton = new JButton("Restart.");
+        restartButton = new JButton("Restart");
         restartButton.setBounds(225, 350, 150, 40);
         restartButton.setVisible(false);
         restartButton.addActionListener(e -> restartGame());
@@ -58,5 +58,4 @@ public class GamePanel extends JPanel implements ActionListener{
         gameController.updateFrame(deltaTime);
         repaint();
     }
-
 }

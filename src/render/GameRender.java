@@ -41,6 +41,7 @@ public class GameRender {
         drawScore(g, gameController.getApplesEaten());
         drawFPS(g);
         drawHighScore(g, gameController.getHighScore());
+        
         if(gameController.isRunning()){
             drawApple(g, gameController.getApple());
             if(gameController.getPoisonApple() != null){
@@ -179,10 +180,10 @@ public class GameRender {
     }
 
     public void drawGameOver(Graphics g){ 
-        g.setColor(Color.PINK);
+        g.setColor(GameConfig.HUD_TEXT);
         g.setFont(new Font("Times New Roman", Font.BOLD, 40));
         FontMetrics metrics = g.getFontMetrics(); //this is used to center the text on the screen;
-        g.drawString("Game Over.", (GameConfig.SCREEN_WIDTH - metrics.stringWidth("Game Over."))/2, GameConfig.SCREEN_HEIGHT/2);
+        g.drawString("Game Over", (GameConfig.SCREEN_WIDTH - metrics.stringWidth("Game Over"))/2, GameConfig.SCREEN_HEIGHT/2);
     }
 
     public void drawScore(Graphics g, int score){
@@ -202,7 +203,7 @@ public class GameRender {
         g.setColor(GameConfig.PAUSE_TEXT);
         g.setFont(new Font("Times New Roman", Font.BOLD, 40));
         FontMetrics metrics = g.getFontMetrics();
-        g.drawString("Game is paused.", (GameConfig.SCREEN_WIDTH - metrics.stringWidth("Game is paused."))/2, GameConfig.SCREEN_HEIGHT/2);
+        g.drawString("Game Paused", (GameConfig.SCREEN_WIDTH - metrics.stringWidth("Game Paused"))/2, GameConfig.SCREEN_HEIGHT/2);
     }
 
     public void drawFPS(Graphics g){
@@ -215,7 +216,7 @@ public class GameRender {
             lastFpsTime = now;
         }
 
-        g.setColor(Color.PINK);
+        g.setColor(GameConfig.HUD_TEXT);
         g.setFont(new Font("Times New Roman", Font.BOLD, 16));
         g.drawString("FPS: " + fps, 520, 20);
     }
