@@ -13,14 +13,14 @@ public class GameConfig {
     public static final int POISON_APPLE_DURATION = 7000;
     public static final int POISON_APPLE_CHANCE = 8;
     public static final int MIN_MOVE_DELAY = 80;
-    public static final int SPEED_INCREASE = 10;
+    public static final int SPEED_INCREASE = 4;
     public static final int SPEED_INCREASE_SCORE_INTERVAL = 2;
     public static final long FPS_SAMPLE_INTERVAL_NANOS = 500_000_000L;
 
     public static final Color LIGHT_TILE = new Color(78, 72, 88);
     public static final Color DARK_TILE = new Color(68, 62, 78);
-    //Color lightSandyTile = new Color(242, 216, 143);
-    //Color darkSandyTile = new Color(230, 197, 112);
+    //public static final Color LIGHT_SANDY_TILE = new Color(242, 216, 143);
+    //public static final Color DARK_SANDY_TILE = new Color(230, 197, 112);
     public static final Color PAUSE_TEXT = Color.ORANGE;
     public static final Color HUD_TEXT = Color.ORANGE;
 

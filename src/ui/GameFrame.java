@@ -17,9 +17,15 @@ public class GameFrame extends JFrame {
     }
 
     private void showDifficultyMenu(){
-        JPanel menuPanel = new JPanel();
+        Image backgroundImage = new ImageIcon(getClass().getResource("/images/menuBackground.png")).getImage();
+        JPanel menuPanel = new JPanel(){
+            @Override
+            protected void paintComponent(Graphics g){
+            super.paintComponent(g);
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
         menuPanel.setPreferredSize(new Dimension(600,600));
-        menuPanel.setBackground(Color.black);
         menuPanel.setLayout(new GridBagLayout());
         
         JButton easyButton = new JButton("Easy");
@@ -31,7 +37,7 @@ public class GameFrame extends JFrame {
         hardButton.addActionListener(e -> startGame(new HardDifficulty()));
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(Color.black);
+        buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new GridLayout(3,1,0,20));
 
         buttonPanel.add(easyButton);
