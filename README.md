@@ -1,102 +1,125 @@
-## Possible upgrades for the Snake Game.
+# Snake Game 🐍
 
-## Easy additions
+<p align="center">
+  <img src="assets/gameplay.gif" width="450" alt="Gameplay">
+</p>
 
-1. Pause key (P). ✅
-> Added the pauseDisplay() method that is called if the "P" key is pressed.
-2. Restart key after Game Over. ✅
-> Made a restart button that appear after the game is finished.
-3. High score that survives multiple games. ✅
-> Added the highScoreDisplay() method, altered the checkApple() method with if cindition that checks if current score is more than high score and if so the new high score is set.
-4. Difficulty selection (Easy/Medium/Hard). ✅
-> Created a difficulty menu, that pops up before the game, in GamePanel class.
-> Implemented a Strategy DP, by creating the DifficultyBehaviour interface, and implementing it across distinct classes including EasyDifficulty, MediumDifficulty, HardDifficulty.
-5. Speed increases every few apples. ✅
-> Added an if condition inside the checkApple() class, that increasses the speed by 10 (i.e. reduces the delay by 10)every 2 apples.
-6. Different snake colors each game. ✅
-> Implemented a random colour generator.
+> A **Java Swing** version of the classic **Snake game**. <br>
+> The player controls a snake, collects apples, avoids crashing into the walls or itself, and tries to get the highest score possible.
 
+## ✨ Features
 
-## Gameplay improvements
+* 🎮 Main menu with **Easy**, **Medium**, and **Hard** difficulty modes.
+* 🐍 Smooth animated snake movement using interpolation between previous & current positions.
+* 🎨 Custom snake textures, apple sprites, and a themed background.
+* 🔊 Sound effects for movement, apple collection, menu interactions, and Game Over.
+* 🍎 Three apple types:
+  * **Regular** (+1 point)
+  * **Golden** (+3 points)
+  * **Poison** (-2 points and removes one body segment)
+* ⏱ Poison apples disappear after 7 seconds if left uncollected.
+* ⚡ The snake's movement speed gradually increases as the score grows.
+* 🏆 Current score and session high score tracking.
+* ⏸ Pause and resume with the **P** key.
+* 🔄 Restart button after Game Over.
+* 📈 FPS counter for performance monitoring.
 
-7. Golden apples worth 3 points. ✅
-> Created a seperate apple package to organise apple-related behaviour. This package contains AppleSpawner, AppleType classes. AppleType is an enum that has REGULAR and GOLDEN apples. The Apple class stores the apple's position, type, colour, and point value, while AppleSpawner handles randomly creating regular or golden apples.
-8. Poison apples that shorten the snake. ✅
-> Created a POISENED apple type, added a checkPoisonApple() method inside the GamePanel class that checks if the poisoned apple has been eaten and shortens the snake by 1 body part and deducts 2 points from the score. Also i added the updatePoisonApple() method in GamePanel that ensures the duration of 7 seconds of poison apple being on a map.
-9. Moving apples (xz , maybe do the visual improvement rather)
-10. Timed apples that disappear after a few seconds
-11. Walls/obstacles
-12. Random maze generation
-13. Teleport tunnels (go in left side, come out right)
+---
 
-## Visual improvements
+## 🎮 Controls
 
-14. Animated snake eyes
-15. Gradient snake body
-16. Particle effects when eating apples
-17. Score popups (+1, +5)
-18. Smooth movement instead of grid jumping. ✅
-> Positions use previousX, previousY, x, and y with animationProgress so the snake moves smoothly between grid squares instead of jumping instantly. I'm gonna say that it works , because i don't really know how to make it even smoother, so i'll let it be like this for now.
-19. Snake thickness decreases gradually from head towards tail. ✅
-> For each segment, "double t" first calculates how far that segment is from the tail toward the head. t becomes a value between 0 and 1. Near the tail, t is close to 0. Near the head, t is closer to 1. Then the "partSize" uses t to calculate the thickness of that part of the snake.
-20. Add visual image-based snake design. ✅
-> Added PNG-based assets to improve the snake's appearance, this includes a snake head image and a snake skin texture.
-> Updated the snake body rendering to use the skin image as a repeated texture instead of a plain colour.
-> Implemented head rotation logic so the head image turns to match the snake's current direction.
-21. Add background image. ✅
-22. Add different apple's images. ✅
-23. Bugs: the rotten apple countdown still goes,even when the game is paused. The head snake can point in different side after the game is restarted. ✅ (fixed).
-24. Bugs: laggy, because of "Image appleImage = new ImageIcon(getClass().getResource(apple.getAppleType().getImagePath())).getImage();" in the drawApple() method. That was loading apple images every repaint, around 60 times per second. ✅ (fixed).
-> Created an ImageManager class, that handles the load of urls for different types of images. With ImageManager, the images are already loaded once here: "imageManager = new ImageManager();" and the drawApple() just accesses them in the constructor, instead of loading the appleImage everytime the method is called.
+| Key     | Action         |
+| ------- | -------------- |
+| ↑ ↓ ← → | Move the snake |
+| **P**   | Pause / Resume |
 
-## More challenging mechanics
+---
 
-19. Wrap-around map
-20. Going off the left side appears on the right
-21. Limited lives
-22. Boss apples
-23. Take multiple hits to eat
-24. Enemy snakes
-25. AI snake competing for food
+## 🚀 Running the Game
 
-## Power-ups
+Clone the repository and open it in your preferred Java IDE (such as IntelliJ IDEA, Eclipse, or VS Code).
 
-26. Speed boost
-27. Slow motion
-28. Invincibility
-29. Double points
-30. Shrink snake
-31. Ghost mode (pass through yourself)
+Run the main class:
 
-## These are great for learning:
+```text
+src/snake/SnakeGame.java
+```
 
-32. Save high scores to a file
-33. Main menu screen
-34. Settings screen
-35. Sound effects
-36. Music
-37. Multiple levels
-38. Local 2-player mode
-39. Online multiplayer (advanced)
+Alternatively, from the project directory:
 
-## If I were picking the most educational, shortlist:
+```powershell
+javac -encoding UTF-8 -d bin (Get-ChildItem -Path src -Recurse -Filter *.java).FullName
+java -cp bin snake.SnakeGame
+```
 
-1. Speed increases over time
-2. High score saving to a file + maybe a leaderboard based on the data in the file
-3. Golden apples
-4. Obstacles/mazes
-5. Pause + restart menu
-6. Power-ups
-7. 2-player snake
+---
 
-## How the game is being refactored:
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
-![alt text](image-3.png)
-![alt text](image-4.png)
-![alt text](image-6.png)
-![alt text](image-7.png)
-![alt text](image-5.png)
-Each of the snake's body part is drawn using a seperate method.
-Now just change the GamePanel.
+## 🏗 Project Structure
+
+```text
+src/
+├── apple/        Apple models, spawning logic and apple types
+├── config/       Game configuration and constants
+├── controller/   Input handling and gameplay logic
+├── difficulty/   Strategy pattern implementation for difficulties
+├── images/       Game sprites and textures
+├── model/        Snake and movement classes
+├── render/       Rendering, image loading and audio management
+├── sounds/       Sound effects
+├── ui/           Swing window and game panel
+└── snake/        Application entry point
+```
+
+---
+
+## 🛠 Architecture
+
+The project follows an object-oriented structure with a clear separation of responsibilities.
+
+* **GameController** – Handles gameplay, movement, collisions, scoring, pause, restart and apple interactions.
+* **GameRender** – Draws the snake, apples, UI, score, FPS counter and game states.
+* **GameFrame** – Creates the main window and difficulty menu.
+* **GamePanel** – Runs the game loop and updates the display.
+* **ImageManager** – Loads image assets once and reuses them to improve rendering performance.
+* **SoundManager** – Loads and manages sound effects.
+* **DifficultyBehaviour** – Uses the **Strategy Design Pattern** to provide different difficulty implementations.
+
+---
+
+## ⚙ Customization
+
+Most gameplay settings can be modified inside **GameConfig**, including:
+
+* Board dimensions
+* Grid size
+* Initial snake length
+* Speed scaling
+* Poison apple lifetime
+
+Game assets can also be easily replaced:
+
+* Snake textures (`src/images/`)
+* Apple sprites (`src/images/`)
+* Menu background (`src/images/`)
+* Sound effects (`src/sounds/`)
+
+---
+
+## 📚 Technical Highlights
+
+This project was developed to practice Java game development and object-oriented design.
+
+Some of the techniques used include:
+
+* Strategy Design Pattern
+* Separation of rendering and game logic
+* Smooth movement interpolation
+* Resource caching for images and sounds
+* Modular project structure
+* Java Swing rendering and event handling
+
+---
+
+## 📝 Notes
+
+To improve performance, all images and audio are loaded once during initialization and reused throughout the game instead of being loaded every frame.

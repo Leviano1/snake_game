@@ -33,7 +33,7 @@ public class GameController {
         snake = new Snake();
         appleSpawner = new AppleSpawner();
         soundManager = new SoundManager();
-        startDelay = difficulty.getDelay(); //maybe rename this one;
+        startDelay = difficulty.getDelay();
         highScore = 0;
         restartGame();
     }

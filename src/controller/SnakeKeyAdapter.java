@@ -7,11 +7,11 @@ import model.Direction;
 
 public class SnakeKeyAdapter extends KeyAdapter {
     private final GameController gameController;
-    private final Runnable repaintCallback; // maybe rename;
+    private final Runnable repaintCallback;
 
     public SnakeKeyAdapter(GameController gameController, Runnable repaintCallback){
         this.gameController = gameController;
-        this.repaintCallback = repaintCallback;
+        this.repaintCallback = repaintCallback; //tells the UI to redraw itself.
     }
 
     @Override
